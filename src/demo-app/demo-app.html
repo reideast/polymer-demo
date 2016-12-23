@@ -1,0 +1,74 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+
+<dom-module id="demo-app">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <h2>Hello [[prop1]]</h2>
+
+    <paper-button raised on-tap="changeValue">Translate!</paper-button>
+
+    <h2>Enter a color:</h2>
+
+    <paper-input value="{{value}}"></paper-input>
+
+    <div id="colorBox" style="border: 1px dotted #667766; border-radius: 3px; font-family: 'Roboto', 'Noto', sans-serif; font-size: 18px; height: 3em; line-height: 3em; margin: 10px; padding: 10px; text-align: center;">[[value]]</div>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'demo-app',
+
+      properties: {
+        prop1: {
+          type: String,
+          value: 'World!',
+        },
+        value: {
+          type: String,
+          observer: 'valueChanged', // a function that fires every time prop is changed (only triggered if value actually changes, or if it was null and is changed to something)
+          value: '', // set to something by default, so as to not trigger polymer's problems with null-->value triggers
+        }
+      },
+
+      changeValue() {
+        if (this.prop1 === 'World!') {
+          this.prop1 = 'Domhainn!';
+        } else {
+          this.prop1 = 'World!';
+        }
+      },
+
+      valueChanged(newValue, oldValue) {
+        const elem = document.getElementById('colorBox');
+        elem.style.backgroundColor = newValue;
+
+        // change text color to maintain high contrast
+        // http://stackoverflow.com/questions/3942878/how-to-decide-font-color-in-white-or-black-depending-on-background-color
+        // if (red*0.299 + green*0.587 + blue*0.114) > 186 use #000000 else use #ffffff
+        var c = elem.style.backgroundColor;
+        c = window.getComputedStyle(elem, null).backgroundColor;
+        var rgb = c.replace(/^(rgb|rgba)\(/,'').replace(/\)$/,'').replace(/\s/g,'').split(','); // from stackoverflow
+        // console.log("colors:");
+        // console.log(c);
+        // for(var i in rgb) {
+          // console.log(rgb[i]);
+        // }
+        if ((rgb[0]*0.299 + rgb[1]*0.587 + rgb[2]*0.114) > 186 ) {
+          elem.style.color = "#000";
+        } else {
+          elem.style.color = "#fff";
+        }
+      }
+
+    });
+  </script>
+</dom-module>
